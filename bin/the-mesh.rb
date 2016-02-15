@@ -9,7 +9,7 @@ def calc(op, arr)
   return op.to_i if arr.empty?
 
   right = calc(arr[0], arr[1..-1])
-  return op.to_i unless right
+  return nil unless right
 
   case op.to_s
   when /\A-?\d+\z/
