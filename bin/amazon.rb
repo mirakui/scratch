@@ -10,6 +10,9 @@ ENDPOINT = "webservices.amazon.co.jp"
 
 REQUEST_URI = "/onca/xml"
 
+title, author = ARGV
+abort unless title
+
 params = {
   "Service" => "AWSECommerceService",
   "Operation" => "ItemSearch",
@@ -17,10 +20,10 @@ params = {
   "AssociateTag" => "mirakui-22",
   "SearchIndex" => "Books",
   "ResponseGroup" => "Images,ItemAttributes",
-  "Sort" => "price",
-  "Title" => "恋は光",
-  "Author" => "秋★枝"
+  "Sort" => "salesrank",
+  "Title" => title,
 }
+params["Author"] = author if author
 
 # Set current timestamp if not set
 params["Timestamp"] = Time.now.gmtime.iso8601 if !params.key?("Timestamp")
@@ -39,4 +42,4 @@ signature = Base64.encode64(OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha256'), 
 # Generate the signed URL
 request_url = "http://#{ENDPOINT}#{REQUEST_URI}?#{canonical_query_string}&Signature=#{URI.escape(signature, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))}"
 
-puts "Signed URL: #{request_url}"
+system "open \"#{request_url}\""
